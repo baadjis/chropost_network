@@ -1,0 +1,89 @@
+/**
+ * chronoposte distribution
+ */
+namespace fr.laposte
+enum TypeColis{
+    o LETTRE_RECOMMANDEE
+    o DOCUMENTS
+    o PETIT_PAQUET
+    o CARTON
+}
+enum Etat{
+    o BON
+    o ABIME
+    o CASSE
+
+}
+asset Colis identified by numeroDeColis {
+  o String numeroDeColis
+  o TypeColis type
+  o Etat etat
+  --> Personne Destinataire
+  --> Personne Emetteur
+  o Adresse Localisation
+}
+abstract participant Personne identified by nom {
+    o String nom
+    
+}
+concept Adresse {
+    o String id
+}
+abstract transaction Deplacement  {
+    -->Colis colis
+    o Adresse newadresse
+    o String Message
+}
+transaction SuivreEtat {
+    -->Colis colis
+    o Etat newstate
+
+}
+
+participant Facteur extends Personne {
+    o String immatri
+
+}
+
+participant Client extends Personne {
+    o Adresse adr
+
+}
+
+participant CentreTri extends Personne {
+    o String numerocentre
+    o Adresse adr
+}
+transaction Transport extends Deplacement{
+    
+    -->CentreTri Depart
+    -->CentreTri Arrive
+    
+}
+transaction Distribution extends Deplacement{
+    
+    -->CentreTri Depart
+    -->Client Destinataire
+    -->Facteur facteur
+    
+
+
+}
+event DistribueEvent{
+    
+    -->Colis colis
+    -->CentreTri Depart
+    -->Client Destinataire
+    -->Facteur facteur
+    o String Message
+    
+    
+}
+event TransportEvent{
+    -->Colis colis
+    -->CentreTri Depart
+    -->CentreTri Arrive
+    o String Message
+    
+    
+}
